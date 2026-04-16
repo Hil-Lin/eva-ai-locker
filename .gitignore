@@ -1,0 +1,80 @@
+# Build artifacts
+*.o
+*.ko
+*.obj
+*.elf
+*.map
+*.sym
+*.order
+*.mod.c
+*.mod.o
+*.d
+*.ld
+*.bin
+*.hex
+
+# Compiled binaries
+*.exe
+*.out
+*.app
+*.so
+*.dylib
+*.dll
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+.superpowers/
+*.log
+*.pid
+/tmp/
+/build/
+/dist/
+
+# Hardware specific
+*.bit
+*.mcs
+*.rpt
+*.xise
+*.xst
