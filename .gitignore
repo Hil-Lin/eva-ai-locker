@@ -4,22 +4,22 @@
 *.obj
 *.elf
 *.map
-*.sym
 *.bin
 *.hex
+*~
+out/
 
 # Python
 __pycache__/
 *.py[cod]
-*.so
-.env/
-venv/
+.pytest_cache/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*.code-workspace
 
 # OS
 .DS_Store
@@ -28,4 +28,3 @@ Thumbs.db
 # Project
 /build/
 /dist/
-*.log
