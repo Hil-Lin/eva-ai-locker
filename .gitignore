@@ -29,3 +29,28 @@ Thumbs.db
 /build/
 /dist/
 *.log
+
+# AI assistant config (not for public repo)
+CLAUDE.md
+.claude/
+.superpowers/
+
+# Competition submission materials
+代码文件/
+嵌入式大赛/
+
+# Internal dev artifacts
+progress/
+buildroot/
+00- 串口调试工具/
+
+# Temp docs
+docs/tmp/
+
+# Root-level test and demo scripts
+test_*.py
+smart_locker_db.py
+smart_locker_demo.py
+smart_locker_full.py
+voice_ai_integration.py
+init_db.py

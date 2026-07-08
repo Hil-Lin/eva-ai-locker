@@ -1,0 +1,453 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>智能储物柜</title>
+<style>
+:root{--bg:#12100E;--bg2:#1A1714;--bg3:#211E1A;--tx:#E8E0D4;--tx2:#9C8E7C;--tx3:#6B5E4F;--ac:#D4705F;--jd:#6B9E7E;--bw:#7B8DB3;--bd:#302A22}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--tx);width:100vw;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+#top{height:38px;background:var(--bg);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 14px;flex-shrink:0}
+#top .tt{font-family:'Noto Serif SC',serif;font-size:15px;font-weight:600;letter-spacing:2px;cursor:pointer}#top .ur{font-size:11px;color:var(--tx2);margin-left:auto}
+#cabs{height:66px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px 12px;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0}
+.cb{background:var(--bg3);border-radius:8px;padding:5px 8px;text-align:center}.cb.out{background:var(--ac)}.cb .n{font-size:12px;font-weight:600}.cb .m{font-size:9px;color:var(--tx2)}.cb .s{font-size:9px}
+#main{flex:1;overflow-y:auto;padding:12px 16px}.vw{display:none}.vw.on{display:block}
+
+#foot{height:22px;background:var(--bg);border-top:1px solid var(--bd);display:flex;align-items:center;padding:0 10px;font-size:10px;color:var(--tx3);flex-shrink:0}#foot .fr{margin-left:auto}
+#home{display:flex;gap:24px;justify-content:center;align-items:center;height:100%}
+.cd{width:350px;height:190px;border-radius:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid var(--bd)}.cd:active{transform:scale(.97)}.cd .ic{font-size:36px}.cd .lb{font-size:19px;font-weight:600;font-family:'Noto Serif SC',serif}.cd .hi{font-size:11px;color:var(--tx3)}.cd.bw{background:var(--bw);border-color:var(--bw)}.cd.jd{background:var(--jd);border-color:var(--jd)}
+#md .bt{padding:14px 28px;font-size:17px;border-radius:12px;min-width:120px}
+#md .mb{gap:12px}
+#md h3{font-size:18px;text-align:center}
+.sh{display:flex;align-items:center;gap:8px;margin-bottom:10px}.sh .bk{width:46px;height:26px;border:1px solid var(--bd);border-radius:7px;background:var(--bg3);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px}.sh .st{font-family:'Noto Serif SC',serif;font-size:17px;font-weight:600}
+.stp{font-size:12px;color:var(--tx2);margin-bottom:10px}
+.cds{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:14px}
+.cd2{width:260px;padding:20px;border-radius:12px;cursor:pointer;text-align:center;border:1px solid var(--bd);background:var(--bg3)}.cd2:active{transform:scale(.97)}.cd2 .ci{font-size:28px}.cd2 .cl{font-size:15px;font-weight:600;margin:6px 0}.cd2 .ch{font-size:11px;color:var(--tx3)}.cd2.bg-ac{background:var(--ac);color:#fff;border-color:var(--ac)}.cd2.bg-ac .ch{color:rgba(255,255,255,.7)}
+.gd{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.gi{background:var(--bg3);border-radius:8px;padding:10px;cursor:pointer;border:1px solid var(--bd);text-align:center}.gi:active{background:var(--bd)}.gi .cn{font-size:14px;font-weight:600}.gi .ci{font-size:11px;color:var(--tx2)}
+.ct{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.cti{font-size:11px;padding:4px 10px;border-radius:12px;border:1px solid var(--bd);background:var(--bg3);color:var(--tx2);cursor:pointer}.cti.on{background:var(--bw);color:var(--bw);border-color:var(--bw)}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:260px;margin:8px auto}
+.ky{background:var(--bg3);border:1px solid var(--bd);border-radius:9px;padding:12px;text-align:center;font-size:19px;font-weight:600;cursor:pointer}.ky:active{background:var(--bd)}.ky.ok{background:var(--jd);color:#fff}
+.pb{text-align:center;font-size:22px;letter-spacing:8px;padding:10px;min-height:40px;color:var(--tx)}
+.bt{padding:12px 22px;border-radius:10px;font-size:16px;font-weight:600;border:1px solid var(--bd);cursor:pointer;color:var(--tx);background:var(--bg3)}.bt:active{transform:scale(.96)}.bt.bw{background:var(--bw);color:#fff}.bt.jd{background:var(--jd);color:#fff}.bt.ac{background:var(--ac);color:#fff}
+.br{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.ls{display:flex;flex-direction:column;gap:6px}.li{background:var(--bg3);border-radius:8px;padding:10px 14px;cursor:pointer;border:1px solid var(--bd)}.li:active{background:var(--bd)}.li .ln{font-size:14px;font-weight:600}.li .ld{font-size:11px;color:var(--tx2)}
+#mbg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:100}#mbg.on{display:flex}
+#md{background:var(--bg2);border-radius:14px;padding:24px;min-width:380px;max-width:500px;border:1px solid var(--bd)}#md h3{font-family:'Noto Serif SC',serif;margin-bottom:10px}#md .mp{margin:4px 0;font-size:14px}#md .mh{font-size:11px;color:var(--tx3);margin:4px 0}.mb{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+#tst{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:16px;font-size:12px;background:var(--bg3);border:1px solid var(--bd);opacity:0;transition:opacity .3s;pointer-events:none;z-index:200}#tst.on{opacity:1}
+.tb{width:100%;border-collapse:collapse;font-size:12px}.tb td,.tb th{padding:5px 8px;border-bottom:1px solid var(--bd)}.tb th{color:var(--tx2);font-size:10px;text-align:left}
+.warn{color:var(--ac)}.ok{color:var(--jd)}
+.inp{width:100%;padding:10px 14px;border-radius:10px;border:1px solid var(--bd);background:var(--bg3);color:var(--tx);font-size:14px;outline:none}
+.form label{display:block;font-size:12px;color:var(--tx2);margin-bottom:4px}
+.scan{text-align:center;padding:30px;border:2px dashed var(--bd);border-radius:14px;margin:10px 0}.scan .sc{font-size:48px;margin-bottom:8px}.scan .st{font-size:15px;color:var(--tx2)}
+
+#scan-zone.scanning{border-color:var(--bw);animation:pulse 1.5s infinite}
+#scan-zone.found{border-color:var(--jd)}
+#scan-zone.unreg{border-color:var(--ac)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+</style></head><body>
+<div id="top"><span class="tt" onclick="go('home')">智能储物柜</span><span class="ur" id="ub"></span><span class="ur" id="uact" style="display:none;margin-left:12px"><a href="#" onclick="doLogout();return false" style="color:#ff9999;font-size:12px">退出登录</a></span><span class="ur" style="margin-left:12px"><a href="#" onclick="doQuit();return false" style="color:#999;font-size:12px">退出系统</a></span></div>
+<div id="cabs"></div>
+<div id="main">
+<div id="home" class="vw on">
+ <div class="cd bw" onclick="go('borrow-auth')"><div class="ic">📥</div><div class="lb">借用器件</div><div class="hi">AI辅助或直接选择</div></div>
+ <div class="cd" onclick="go('lock-test')" style="margin-top:16px"><div class="ic">🔧</div><div class="lb">硬件测试</div><div class="hi">电磁锁控制</div></div>
+ <div class="cd jd" onclick="go('return')"><div class="ic">📤</div><div class="lb">归还器件</div><div class="hi">扫码或手动登录</div></div>
+</div>
+
+<!-- NEW: borrow-auth = step1 identity verification -->
+<div id="borrow-auth" class="vw">
+ <div class="sh"><div class="bk" onclick="go('home')">←</div><div class="st">借用器件 — 身份验证</div></div>
+ <div class="stp">步骤1/4: 验证身份 (任选其一) | 步骤2: 选择借用方式 | 步骤3: 选择器件 | 步骤4: 确认开柜</div>
+ <div class="br"><div class="bt" onclick="doFaceAuth()">👤 人脸识别</div><div class="bt" onclick="doNFCAuth()">🃏 NFC 刷卡</div><div class="bt bw" onclick="go('borrow-pwd')">🔐 管理员密码</div></div>
+</div>
+
+<!-- borrow-mode = step2 mode selection AFTER auth -->
+<div id="borrow-mode" class="vw">
+ <div class="sh"><div class="bk" onclick="go('borrow-auth')">←</div><div class="st">借用器件 — 选择方式</div></div>
+ <div class="stp">步骤2/4: 选择借用方式 | 步骤3: 选择器件 | 步骤4: 确认开柜</div>
+ <div class="cds">
+  <div class="cd2" onclick="go('borrow-ai')"><div class="ci">🎙️</div><div class="cl">AI 辅助借用</div><div class="ch">语音描述需求，AI推荐最合适的器件</div></div>
+  <div class="cd2" onclick="go('borrow')"><div class="ci">📋</div><div class="cl">直接借用</div><div class="ch">按分类/历史/柜号手动选择</div></div>
+ </div>
+</div>
+
+<div id="borrow-ai" class="vw">
+ <div class="sh"><div class="bk" onclick="go('borrow-mode')">←</div><div class="st">AI 辅助借用</div></div>
+ <div class="stp">1. 语音说出需求 → 2. AI匹配推荐 → 3. 选择器件 → 4. 确认开柜</div>
+ <div class="scan" onclick="T('语音识别待接入，请使用直接借用')"><div class="sc">🎙️</div><div class="st">点击开始语音输入<br><small>说出"我需要5V稳压芯片"</small></div></div>
+ <div class="br" style="justify-content:center"><div class="bt bw" onclick="go('borrow')">切换到直接借用</div></div>
+</div>
+
+<div id="borrow" class="vw">
+ <div class="sh"><div class="bk" onclick="go('borrow-mode')">←</div><div class="st">直接借用</div></div>
+ <div class="stp">步骤3/4: 选择器件 | 步骤4: 确认开柜</div>
+ <div class="br"><div class="bt" id="btn-cat" onclick="setMode('cat')">📂 按分类</div><div class="bt" id="btn-hist" onclick="setMode('hist')">🕐 历史</div><div class="bt" id="btn-cab" onclick="setMode('cab')">📦 按柜号</div></div>
+ <div class="ct" id="bcat"></div>
+ <div class="gd" id="bgd"></div>
+</div>
+
+<div id="borrow-pwd" class="vw">
+ <div class="sh"><div class="bk" onclick="go('borrow-auth')">←</div><div class="st">管理员密码验证</div></div>
+ <div class="stp">输入6位管理员密码 (普通用户请用人脸或NFC)</div>
+ <div class="pb" id="bpwd2"></div>
+ <div class="kp" id="bpad2"></div>
+</div>
+
+<div id="return" class="vw">
+ <div class="sh"><div class="bk" onclick="go('home')">←</div><div class="st">归还器件 — 选择方式</div></div>
+ <div class="stp">选择归还方式: 扫码自动归还(主路径) 或 手动登录归还(辅助路径)</div>
+ <div class="cds">
+  <div class="cd2 bg-ac" onclick="go('return-scan')"><div class="ci">📷</div><div class="cl">扫码自动归还</div><div class="ch">扫描条形码，自动识别并开柜</div></div>
+  <div class="cd2" onclick="go('return-manual')"><div class="ci">👤</div><div class="cl">手动登录归还</div><div class="ch">登录后从借出列表选择归还</div></div>
+ </div>
+</div>
+
+
+<div id="lock-test" class="vw">
+ <div class="sh"><div class="bk" onclick="go('home')">←</div><div class="st">硬件测试 — 电磁锁</div></div>
+ <div class="stp">点击按钮测试每个柜门锁 (CH0-CH7)</div>
+ <div class="gd" id="lock-btns"></div>
+ <div class="br" style="justify-content:center;margin-top:12px">
+  <div class="bt bw" onclick="lockTestAll()">全部依次测试</div>
+  <div class="bt ac" onclick="lockAllOff()">全部关闭</div>
+ </div>
+ <div id="lock-msg" style="text-align:center;margin-top:12px;font-size:13px;color:var(--tx2)"></div>
+</div>
+
+<div id="return-scan" class="vw">
+ <div class="sh"><div class="bk" onclick="cancelScan();go('return')">←</div><div class="st">扫码归还</div></div>
+ <div class="stp">请将器件条形码对准扫码器 — 自动识别并开柜归还</div>
+ <div class="scan" id="scan-zone">
+  <div class="sc" id="scan-icon">📷</div>
+  <div class="st" id="scan-msg">正在启动扫码器...</div>
+ </div>
+ <div id="scan-result" style="display:none;text-align:center;padding:12px"></div>
+ <div class="br" style="justify-content:center">
+  <div class="bt ac" id="btn-cancel-scan" onclick="cancelScan()" style="display:none">取消扫码</div>
+  <div class="bt" onclick="go('return-manual')">切换到手动归还</div>
+ </div>
+</div>
+
+<div id="return-manual" class="vw">
+ <div class="sh"><div class="bk" onclick="go('return')">←</div><div class="st">手动归还 — 身份验证</div></div>
+ <div class="stp">步骤1/4: 验证身份 | 步骤2: 选择器件 | 步骤3: 确认 | 步骤4: 放回柜中</div>
+ <div class="br"><div class="bt bw" onclick="go('return-pwd')">🔢 密码登录</div><div class="bt" onclick="doNFCAuth()">🃏 NFC刷卡</div><div class="bt" onclick="doFaceAuth()">👤 人脸识别</div></div>
+ <div class="br" style="justify-content:center"><div class="bt" onclick="go('return-scan')">切换到扫码归还</div></div>
+</div>
+
+<div id="return-pwd" class="vw">
+ <div class="sh"><div class="bk" onclick="go('return-manual')">←</div><div class="st">输入密码</div></div>
+ <div class="pb" id="rpwd"></div>
+ <div class="kp" id="rpad"></div>
+ <div class="gd" id="rgd"></div>
+</div>
+
+</div>
+<div id="foot"><span id="fm">系统就绪</span><span class="fr">1024×600 · ELF2</span></div>
+<div id="tst"></div><div id="mbg"><div id="md"></div></div>
+
+<script>
+var user=null,lockers={},users=[],_all=[],_mc=null,_bp='',_bC=null,_br=null,_bn=null,_kcb={};
+	// URL auth result reader
+	(function(){var p=new URLSearchParams(location.search);if(p.get("auth")==="1"){user={id:p.get("uid"),name:p.get("name"),permission:1};UB();F("欢迎 "+user.name);T("识别成功!");go(_authTarget);if(_authTarget==="return-pwd")loadReturn();history.replaceState({},"","/")}})();
+async function api(u,b){var o={};if(b)o={method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)};var r=await fetch(u,o);return r.json()}
+async function doFaceAuth(){M('<h3>人脸识别</h3><p style="text-align:center;padding:16px 0"><span style="font-size:42px">&#x1F9D1;</span></p><p style="text-align:center;font-size:14px">请正对摄像头<br>保持面部在画面中央</p>',[]);try{var r=await api("/api/auth/face",{});mcb(0);if(r&&r.ok){user=r.user;UB();F("欢迎 "+user.name);T("识别成功!");go(_authTarget);if(_authTarget=="return-pwd")loadReturn()}else{T(r&&r.error||"识别失败，请重试")}}catch(e){mcb(0);T("连接超时，请重试")}}
+async function doNFCAuth(){F('请刷卡...');T('请在读卡器上刷卡');try{var r=await api('/api/auth/nfc',{});if(r.ok){user=r.user;UB();F('NFC刷卡成功 - 欢迎 '+user.name);T('刷卡成功!');setTimeout(function(){go(_authTarget);if(_authTarget=='return-pwd')loadReturn()},800)}else{T('刷卡失败: '+(r.error||'未读取到卡片'));F('请重试')}}catch(e){T('网络错误, 请重试');F('连接失败')}}
+function T(m,d){var t=document.getElementById('tst');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},d||2000)}
+function UB(){document.getElementById('ub').textContent=user?user.name+' | 已登录':'';document.getElementById('uact').style.display=user?'inline':'none'}
+function F(m){document.getElementById('fm').textContent=m}
+function doLogout(){user=null;UB();T('已退出登录');go('home')}
+function doQuit(){M('<h3>退出系统</h3><p class="mp">确认退出智能储物柜系统?</p>',[{l:'确认退出',c:'jd'},{l:'取消'}]).then(function(idx){if(idx===0){api('/api/quit',{});setTimeout(function(){window.close()},500)}})}
+var _authTarget='borrow-mode';var _bmode='cat';
+function go(v){
+  if(v==='borrow-auth')_authTarget='borrow-mode';
+  if(v==='return-manual')_authTarget='return-pwd';
+  if(v==='return-pwd')_authTarget='return-pwd';
+  document.querySelectorAll('.vw').forEach(function(e){e.classList.remove('on')});
+  var el=document.getElementById(v);if(el)el.classList.add('on');
+  if(v==='borrow')loadBorrow();
+  if(v==='return-pwd'){document.getElementById('rgd').innerHTML=''}
+  if(v==='home')F('系统就绪')}
+
+function drawCabs(){
+  var g=document.getElementById('cabs'),h='';
+  for(var i=1;i<=8;i++){var items=lockers[i]||[],c=items[0]||{},avail=0,total=0,borrowed=0;
+    for(var j=0;j<items.length;j++){var it=items[j];avail+=it.available||0;total+=it.stock||0;borrowed+=it.borrowed||0}
+    h+='<div class="cb'+(borrowed>0?' out':'')+'"><div class="n">柜 '+i+'</div>'+(c.name?'<div class="m">'+c.name.substring(0,6)+'</div>':'')+'<div class="s">'+(total>0?avail+'/'+total:'空闲')+'</div></div>'}
+  g.innerHTML=h}
+async function loadStatus(){var d=await api('/api/status');lockers=d.lockers||{};users=d.users||[];drawCabs()}
+loadStatus();setInterval(loadStatus,6000);
+
+function M(h,bts){return new Promise(function(r){var mb=document.getElementById('mbg'),md=document.getElementById('md');md.innerHTML=h+'<div class="mb">'+bts.map(function(b,i){return '<div class="bt'+(b.c?' '+b.c:'')+'" onclick="mcb('+i+')">'+b.l+'</div>'}).join('')+'</div>';mb.classList.add('on');_mc=r})}
+function mcb(i){document.getElementById('mbg').classList.remove('on');var cb=_mc;_mc=null;if(cb)cb(i)}
+
+function bPad(pid,bid,vname,cb){_kcb[pid]=cb;var p=document.getElementById(pid),h='';for(var n=1;n<=9;n++)h+='<div class="ky" onclick="kp('+n+',\''+vname+'\',\''+bid+'\')">'+n+'</div>';h+='<div class="ky" onclick="kp(-1,\''+vname+'\',\''+bid+'\')">清</div>';h+='<div class="ky" onclick="kp(0,\''+vname+'\',\''+bid+'\')">0</div>';h+='<div class="ky ok" onclick="kpGo(\''+pid+'\',\''+vname+'\',\''+bid+'\')">✓</div>';p.innerHTML=h}
+function kp(n,vn,bid){if(n===-1)window[vn]='';else window[vn]=(window[vn]||'')+n;var d=document.getElementById(bid);if(d)d.textContent=(window[vn]||'').replace(/./g,'●')}
+function kpGo(pid,vn,bid){var v=window[vn];window[vn]='';var d=document.getElementById(bid);if(d)d.textContent='';var cb=_kcb[pid];if(cb)cb(v)}
+
+bPad('rpad','rpwd','_rp',function(pw){
+  api('/api/login',{name:'管理员',password:pw}).then(function(ld){if(!ld.ok){T('密码错误');return}user=ld.user;UB();loadReturn()})});
+
+function loadReturn(){
+  api('/api/status').then(function(d){var items=[],el=document.getElementById('rgd');
+    for(var k in d.lockers){var arr=d.lockers[k];if(!arr)continue;for(var i=0;i<arr.length;i++){if(arr[i].borrowed>0)items.push({cid:arr[i].id,cab:parseInt(k),nm:arr[i].name,cat:arr[i].category})}}
+    if(!items.length){el.innerHTML='<div style="padding:24px;color:var(--tx3);text-align:center;font-size:13px">当前没有借出器件</div>';return}
+    el.innerHTML=items.map(function(c){return '<div class="li" onclick="doReturn('+c.cid+','+c.cab+',&quot;'+c.nm+'&quot;)"><div class="ln">'+c.nm+'</div><div class="ld">'+c.cab+'号柜 | '+c.cat+' | 点击归还</div></div>'}).join('')})}
+
+function doReturn(cid,cab,name){
+  api('/api/admin').then(function(d){var rec=null;for(var i=0;i<d.records.length;i++){if(d.records[i].component_id===cid&&d.records[i].status==='borrowed'){rec=d.records[i];break}}
+    if(!rec){T('找不到记录');return}
+    M('<h3>确认归还</h3><p class="mp"><b>'+name+'</b></p><p class="mp">放回 '+cab+'号柜</p>',[{l:'确认归还',c:'jd'},{l:'取消'}]).then(function(idx){if(idx!==0)return;api('/api/return',{record_id:rec.id}).then(function(rd){if(rd.ok){T('归还成功');loadStatus();go('home')}else{T('归还失败')}})})})}
+
+var _failCount=0;
+bPad('bpad2','bpwd2','_bp2',function(pw){api('/api/login',{name:'管理员',password:pw}).then(function(ld){if(!ld.ok){_failCount++;var left=3-_failCount;if(left>0)T('密码错误,还剩'+left+'次机会');else{T('已锁定,请30分钟后重试');go('borrow-auth');_failCount=0};return}_failCount=0;user=ld.user;UB();go('borrow-mode')})});
+
+function setMode(m){_bmode=m;
+  document.querySelectorAll('#btn-cat,#btn-hist,#btn-cab').forEach(function(e){e.style.background='';e.style.color=''});
+  document.getElementById('btn-'+m).style.background='var(--bw)';document.getElementById('btn-'+m).style.color='#fff';
+  if(m==='cat')fbCat();
+  if(m==='cab')fbByCab();
+  if(m==='hist')loadHistory()}
+
+function loadHistory(){
+  api('/api/admin').then(function(d){
+    var el=document.getElementById('bgd'),h='';
+    document.getElementById('bcat').innerHTML='';
+    var seen={};
+    for(var i=0;i<d.records.length;i++){var r=d.records[i];
+      if(r.status!=='borrowed')continue;
+      var c=d.components.find(function(x){return x.id===r.component_id});if(!c||seen[c.id])continue;
+      seen[c.id]=true;var u=d.users.find(function(x){return x.id===r.user_id})||{};
+      h+='<div class="gi" onclick="askB('+c.id+','+(c.cabinet_id||r.cabinet_id)+',\"'+c.name+'\")"><div class="cn">'+c.name+'</div><div class="ci">'+(c.cabinet_id||r.cabinet_id)+'号柜 | 借出中</div></div>'}
+    if(!h){el.innerHTML='<div style="padding:20px;color:var(--tx3);text-align:center">暂无借用记录</div>'}
+    else{el.innerHTML=h}
+  })}
+
+function loadBorrow(){
+  api('/api/status').then(function(d){_all=[];for(var k in d.lockers){var arr=d.lockers[k];for(var i=0;i<arr.length;i++)_all.push(arr[i])}
+    var cats={};_all.forEach(function(c){cats[c.category]=1});var h='<span class="cti on" onclick="fb(\"\")">全部</span>';for(var k in cats)h+='<span class="cti" onclick="fb(&quot;'+k+'&quot;)">'+k+'</span>';document.getElementById('bcat').innerHTML=h;fb('')})}
+function fb(cat){var items=_all;if(cat)items=_all.filter(function(c){return c.category===cat});
+  document.getElementById('bgd').innerHTML=items.map(function(c){var a=c.available||0;return '<div class="gi" onclick="askB('+c.id+','+c.cabinet+',&quot;'+c.name+'&quot;)"><div class="cn">'+c.name+'</div><div class="ci">'+c.cabinet+'号柜 | 可借:'+a+'/'+(c.stock||0)+'</div></div>'}).join('')}
+function fbCat(){api('/api/status').then(function(d){_all=[];for(var k in d.lockers){var arr=d.lockers[k];for(var i=0;i<arr.length;i++)_all.push(arr[i])}var cats={};_all.forEach(function(c){cats[c.category]=1});var h='<span class="cti on" onclick="fb(&quot;&quot;)">全部</span>';for(var k in cats)h+='<span class="cti" onclick="fb(&quot;'+k+'&quot;)">'+k+'</span>';document.getElementById('bcat').innerHTML=h;fb('')})}
+function fbByCab(){api('/api/status').then(function(d){_all=[];for(var k in d.lockers){var arr=d.lockers[k];for(var i=0;i<arr.length;i++)_all.push(arr[i])}_all.sort(function(a,b){return a.cabinet-b.cabinet});document.getElementById('bcat').innerHTML='<span class="cti on" style="font-size:11px">📦 按柜号排列</span>';var el=document.getElementById('bgd'),h='';for(var cab=1;cab<=8;cab++){var items=_all.filter(function(c){return c.cabinet===cab});if(items.length){for(var j=0;j<items.length;j++){var c=items[j],a=c.available||0;h+='<div class="gi" onclick="askB('+c.id+','+c.cabinet+',&quot;'+c.name+'&quot;)"><div class="cn">'+c.name+'</div><div class="ci">'+c.cabinet+'号柜 | 可借:'+a+'/'+(c.stock||0)+'</div></div>'}}}el.innerHTML=h||'<div style="padding:20px;color:var(--tx3);text-align:center">所有柜子为空</div>'})}
+
+function askB(cid,cab,name){_bC=cid;_br=cab;_bn=name;_bp='';
+  M('<h3>确认借用</h3><p class="mp"><b>'+name+'</b></p><p class="mp">'+cab+'号柜</p><p class="mh">已通过身份验证</p>',[{l:'确认借出',c:'bw'},{l:'取消'}]).then(function(idx){if(idx!==0){_bC=null;return}api('/api/borrow',{user_id:user?user.id:1,component_id:_bC,cabinet_id:_br,mode:'direct'}).then(function(d){mcb(0);if(d.ok){T('借出成功! '+_bn);loadStatus();go('home')}else{T('借出失败: '+d.error)}})})}
+
+bPad('apad','apwd','_ap',function(pw){if(pw!=='123456'){T('密钥错误');return}document.getElementById('admp').style.display='block';F('管理员已验证')});
+function at(tab){api('/api/admin').then(function(d){var el=document.getElementById('act'),h='',titles=['','数据库更新','管理管理员','添加普通用户','查看借用记录','查看用户','外设接入管理'];
+  // highlight sidebar
+  for(var i=1;i<=6;i++)document.getElementById('si-'+i).classList.toggle('sel',i===tab);
+  el.innerHTML='<div class="sh" style="margin-top:8px"><span class="st">'+titles[tab]+'</span></div>';
+  if(tab===1){
+    h='<p style="color:var(--tx2);font-size:12px;margin-bottom:10px">扫描条形码绑定器件 / 手动输入器件信息 / 分配柜子</p>';
+    h+='<table class="tb"><tr><th>ID</th><th>名称</th><th>分类</th><th>柜门</th><th>库存</th></tr>';
+    d.components.forEach(function(c){h+='<tr><td>'+c.id+'</td><td>'+c.name+'</td><td>'+c.category+'</td><td>'+(c.cabinet_id||'?')+'</td><td>'+c.stock+'</td></tr>'});
+    h+='</table><div style="margin-top:12px;color:var(--tx3);font-size:11px">条形码扫描绑定 / Excel导入 — 待接入</div>'
+  }else if(tab===2){
+    h='<table class="tb"><tr><th>ID</th><th>名称</th><th>权限</th><th>管理员</th></tr>';
+    d.users.forEach(function(u){h+='<tr><td>'+u.id+'</td><td>'+u.name+'</td><td>Lv'+u.permission+'</td><td>'+(u.is_admin?'是':'否')+'</td></tr>'});
+    h+='</table><div style="margin-top:12px;color:var(--tx3);font-size:11px">添加/删除管理员 — 使用 locker_cli.py<br>当前管理员密钥: 123456</div>'
+  }else if(tab===3){
+    h='<p style="color:var(--tx2);font-size:12px;margin-bottom:10px">注册新用户: NFC读卡 / 人脸采集 / 录入信息</p>';
+    h+='<div class="form" style="margin:8px 0"><label>用户名</label><input class="inp" id="new-user-name" placeholder="输入姓名" style="margin-bottom:8px">';
+    h+='<label>密码</label><input class="inp" id="new-user-pwd" type="password" placeholder="设置密码" style="margin-bottom:8px">';
+    h+='<div class="bt bw" onclick="addUser()">确认注册</div></div>';
+    h+='<div style="margin-top:10px;color:var(--tx3);font-size:11px">NFC读卡注册 / 人脸采集 — 待接入</div>'
+  }else if(tab===4){
+    h='<table class="tb"><tr><th>ID</th><th>用户</th><th>器件</th><th>柜门</th><th>借出时间</th><th>状态</th></tr>';
+    var all=d.records;
+    // include returned records too
+    for(var i=0;i<all.length;i++){var r=all[i];var u=d.users.find(function(x){return x.id===r.user_id})||{},c=d.components.find(function(x){return x.id===r.component_id})||{};h+='<tr><td>'+r.id+'</td><td>'+u.name+'</td><td>'+c.name+'</td><td>'+r.cabinet_id+'</td><td>'+(r.borrow_time||'')+'</td><td>'+(r.status||'?')+'</td></tr>'}
+    h+='</table><div style="margin-top:8px;color:var(--tx3);font-size:11px">筛选/导出CSV — 待接入</div>'
+  }else if(tab===5){
+    h='<table class="tb"><tr><th>ID</th><th>名称</th><th>权限</th><th>状态</th><th>NFC</th><th>人脸</th></tr>';
+    d.users.forEach(function(u){h+='<tr><td>'+u.id+'</td><td>'+u.name+'</td><td>Lv'+u.permission+'</td><td class="ok">启用</td><td>'+(u.nfc_enabled?'已绑定':'未绑定')+'</td><td>'+(u.face_enabled?'已注册':'未注册')+'</td></tr>'});
+    h+='</table><div style="margin-top:8px;color:var(--tx3);font-size:11px">启用/禁用 和 权限设置 — 使用 locker_cli.py</div>'
+  }else if(tab===6){
+    h='<table class="tb"><tr><th>外设</th><th>状态</th><th>设备路径</th></tr>';
+    h+='<tr><td>摄像头 OV13855</td><td class="ok">已连接</td><td>/dev/video11</td></tr>';
+    h+='<tr><td>NFC PN532</td><td class="warn">待PCR532</td><td>/dev/ttyUSB0</td></tr>';
+    h+='<tr><td>USB麦克风 PCM2902</td><td class="ok">已连接</td><td>card 3</td></tr>';
+    h+='<tr><td>触摸屏 FT5x06</td><td class="ok">已连接</td><td>/dev/input/event1</td></tr>';
+    h+='<tr><td>舵机 PCA9685</td><td class="ok">已连接</td><td>I2C-4 0x40</td></tr>';
+    h+='<tr><td>条形码扫描器</td><td class="ok">已连接</td><td>/dev/ttyACM0</td></tr>';
+    h+='</table>'
+  };el.innerHTML+=h})}
+
+function addUser(){
+  var n=document.getElementById('new-user-name').value.trim();
+  var p=document.getElementById('new-user-pwd').value;
+  if(!n){T('请输入用户名');return}
+  api('/api/register',{name:n,password:p}).then(function(d){
+    if(d.ok){T('用户 '+d.name+' 注册成功! (ID:'+d.user_id+')');document.getElementById('new-user-name').value='';document.getElementById('new-user-pwd').value=''}
+    else{T('注册失败: '+d.error)}
+  })
+}
+
+var _scanSource = null, _scanActive = false;
+
+function startScan() {
+  if (_scanActive) return;
+  _scanActive = true;
+  var zone = document.getElementById('scan-zone');
+  var icon = document.getElementById('scan-icon');
+  var msg = document.getElementById('scan-msg');
+  var cancelBtn = document.getElementById('btn-cancel-scan');
+  zone.classList.add('scanning');
+  zone.classList.remove('found', 'unreg');
+  icon.textContent = '\u{1F4F7}';
+  msg.innerHTML = '等待扫描条形码...<br><small>将条码对准扫码器</small>';
+  document.getElementById('scan-result').style.display = 'none';
+  if (cancelBtn) cancelBtn.style.display = 'inline-block';
+  F('扫码器待命中...');
+  _scanSource = new EventSource('/api/scan/return');
+  _scanSource.onmessage = function(e) {
+    try { var d = JSON.parse(e.data); handleScanEvent(d); } catch(ex) {}
+  };
+  _scanSource.onerror = function() {};
+}
+
+function handleScanEvent(d) {
+  var zone = document.getElementById('scan-zone');
+  var icon = document.getElementById('scan-icon');
+  var msg = document.getElementById('scan-msg');
+  switch (d.event) {
+    case 'scanning':
+      zone.className = 'scan scanning';
+      icon.textContent = '\u{1F4F7}';
+      msg.innerHTML = '等待扫描条形码...<br><small>将条码对准扫码器</small>';
+      break;
+    case 'unregistered':
+      zone.className = 'scan unreg';
+      icon.textContent = '❓';
+      msg.innerHTML = '<span style="color:var(--ac)">未注册条码: ' + d.barcode + '</span><br><small>请使用已入库的器件条码</small>';
+      T('条码未注册: ' + d.barcode);
+      setTimeout(function() {
+        if (_scanActive) { zone.className = 'scan scanning'; icon.textContent = '\u{1F4F7}'; msg.innerHTML = '等待扫描条形码...<br><small>将条码对准扫码器</small>'; }
+      }, 2000);
+      break;
+    case 'noborrow':
+      zone.className = 'scan unreg';
+      icon.textContent = '\u{1F4E6}';
+      msg.innerHTML = '<span style="color:var(--ac)">' + d.component + '</span><br><small>该器件当前未被借用，无需归还</small>';
+      T(d.component + ' 未被借用');
+      setTimeout(function() {
+        if (_scanActive) { zone.className = 'scan scanning'; icon.textContent = '\u{1F4F7}'; msg.innerHTML = '等待扫描条形码...<br><small>将条码对准扫码器</small>'; }
+      }, 2000);
+      break;
+    case 'opening':
+      zone.className = 'scan found';
+      icon.textContent = '\u{1F513}';
+      msg.innerHTML = '正在开锁 — <b>' + d.component + '</b><br><small>' + d.cabinet + '号柜门已打开，请放回器件</small>';
+      T('开锁中: ' + d.cabinet + '号柜');
+      break;
+    case 'done':
+      zone.className = 'scan found';
+      icon.textContent = '✅';
+      msg.innerHTML = '<b>' + d.component + '</b> 归还成功！<br><small>' + d.cabinet + '号柜 - 请关闭柜门</small>';
+      T('归还成功!');
+      F(d.component + ' 已归还');
+      document.getElementById('btn-cancel-scan').style.display = 'none';
+      stopScan();
+      loadStatus();
+      setTimeout(function() { go('home'); }, 3000);
+      break;
+    case 'error':
+      icon.textContent = '⚠️';
+      msg.innerHTML = '<span style="color:var(--ac)">' + d.message + '</span>';
+      T('错误: ' + d.message);
+      break;
+    case 'cancelled':
+      stopScan();
+      break;
+  }
+}
+
+function stopScan() {
+  _scanActive = false;
+  if (_scanSource) { _scanSource.close(); _scanSource = null; }
+  var zone = document.getElementById('scan-zone');
+  if (zone) zone.classList.remove('scanning', 'found', 'unreg');
+  var btn = document.getElementById('btn-cancel-scan');
+  if (btn) btn.style.display = 'none';
+}
+
+function cancelScan() {
+  stopScan();
+  api('/api/scan/cancel', {});
+  T('已取消扫码');
+  F('系统就绪');
+}
+
+var _origGo = go;
+go = function(v) {
+  if (v !== 'return-scan' && _scanActive) {
+    stopScan();
+    api('/api/scan/cancel', {});
+  }
+  _origGo(v);
+  if (v === 'return-scan') {
+    startScan();
+  }
+};
+
+function lockOn(ch){
+  var el=document.getElementById('lock-msg');
+  el.textContent='CH'+ch+' 开锁中...';
+  var btn=document.querySelector('#lock-btns .gi:nth-child('+(ch+1)+')');
+  if(btn)btn.style.background='var(--ac)';
+  fetch('/api/lock/test?ch='+ch+'&action=on').then(function(r){return r.json()}).then(function(d){
+    el.textContent='CH'+ch+' 已开锁 (持续通电中)';
+  });
+}
+function lockOff(ch){
+  var el=document.getElementById('lock-msg');
+  el.textContent='CH'+ch+' 关锁中...';
+  var btn=document.querySelector('#lock-btns .gi:nth-child('+(ch+1)+')');
+  if(btn)btn.style.background='';
+  fetch('/api/lock/test?ch='+ch+'&action=off').then(function(r){return r.json()}).then(function(d){
+    el.textContent='CH'+ch+' 已关锁';
+  });
+}
+function lockPulse(ch){
+  var el=document.getElementById('lock-msg');
+  el.textContent='CH'+ch+' 脉冲测试 (开0.5s→关)...';
+  fetch('/api/lock/test?ch='+ch+'&action=toggle').then(function(r){return r.json()}).then(function(d){
+    el.textContent='CH'+ch+' 脉冲完成';
+  });
+}
+function lockTestAll(){
+  var el=document.getElementById('lock-msg');
+  el.textContent='依次测试全部8路...';
+  fetch('/api/lock/test?ch=-1').then(function(r){return r.json()}).then(function(d){
+    el.textContent='全部测试完成: '+JSON.stringify(d.all_test);
+  });
+}
+function lockAllOff(){
+  var el=document.getElementById('lock-msg');
+  el.textContent='关闭全部...';
+  var ps=[];
+  for(var i=0;i<8;i++)ps.push(fetch('/api/lock/test?ch='+i+'&action=off'));
+  Promise.all(ps).then(function(){el.textContent='全部已关闭'});
+}
+function lockInitBtns(){
+  var h='';
+  for(var i=0;i<8;i++){
+    h+='<div class="gi" style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px">';
+    h+='<div style="font-size:16px;font-weight:600">#'+(i+1)+'号柜</div>';
+    h+='<div style="font-size:10px;color:var(--tx2)">CH'+i+'</div>';
+    h+='<div style="display:flex;gap:4px">';
+    h+='<div class="bt" style="font-size:10px;padding:4px 8px;background:var(--jd);color:#fff" onclick="lockOn('+i+')">开</div>';
+    h+='<div class="bt" style="font-size:10px;padding:4px 8px;background:var(--ac);color:#fff" onclick="lockPulse('+i+')">脉冲</div>';
+    h+='<div class="bt" style="font-size:10px;padding:4px 8px" onclick="lockOff('+i+')">关</div>';
+    h+='</div></div>';
+  }
+  document.getElementById('lock-btns').innerHTML=h;
+}
+// Init lock buttons when view is shown
+var _origGo=go;
+go=function(v){
+  _origGo(v);
+  if(v==='lock-test')lockInitBtns();
+};
+
+</script></body></html>
