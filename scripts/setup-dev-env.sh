@@ -1,52 +1,54 @@
 #!/bin/bash
-# scripts/setup-dev-env.sh
+# EVA AI 智能储物柜 — 开发环境初始化脚本
+# 适用平台: ELF 2 (RK3588) + Ubuntu 22.04 (aarch64)
 
-echo "智能储物柜系统开发环境设置脚本"
-echo "================================="
+set -e
 
-# 检查Ubuntu版本
-if [ ! -f /etc/os-release ]; then
-    echo "错误: 仅支持Ubuntu系统"
-    exit 1
+echo "EVA AI 智能储物柜 — 开发环境初始化"
+echo "====================================="
+
+if [ "$(uname -m)" != "aarch64" ]; then
+    echo "警告: 当前架构非 aarch64，此脚本针对 ELF 2 (RK3588) 设计"
 fi
 
-source /etc/os-release
-if [ "$ID" != "ubuntu" ]; then
-    echo "警告: 当前系统不是Ubuntu，可能不兼容"
-fi
-
-echo "1. 更新系统包管理器..."
+echo ""
+echo "1. 安装系统依赖..."
 sudo apt update
-sudo apt upgrade -y
+sudo apt install -y python3 python3-pip python3-pyqt5 python3-opencv
+sudo apt install -y espeak libnfc-dev
 
-echo "2. 安装基本开发工具..."
-sudo apt install -y build-essential git cmake pkg-config
-
-echo "3. 安装ARM交叉编译工具链..."
-sudo apt install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
-
-echo "4. 安装Buildroot依赖..."
-sudo apt install -y libncurses5-dev bc rsync cpio unzip wget
-
-echo "5. 安装Python开发环境..."
-sudo apt install -y python3 python3-pip python3-venv
+echo ""
+echo "2. 安装 Python 依赖..."
 pip3 install --upgrade pip
+pip3 install opencv-contrib-python sounddevice numpy pyserial
 
-echo "6. 安装Qt5开发工具..."
-sudo apt install -y qt5-default qtcreator
+echo ""
+echo "3. 检查关键外设..."
+echo -n "  PCA9685 (I2C)... "
+i2cdetect -y 2 2>/dev/null | grep -q "40" && echo "✓ 0x40" || echo "✗ 未检测到"
+echo -n "  NFC (PN532)... "
+[ -e /dev/ttyUSB0 ] && echo "✓ /dev/ttyUSB0" || echo "✗ 未连接"
+echo -n "  扫码器... "
+[ -e /dev/ttyACM0 ] && echo "✓ /dev/ttyACM0" || echo "✗ 未连接"
+echo -n "  摄像头 (MIPI)... "
+[ -e /dev/video11 ] && echo "✓ /dev/video11" || echo "✗ 未检测到"
 
-echo "7. 克隆Buildroot..."
-if [ ! -d "buildroot" ]; then
-    git clone https://github.com/buildroot/buildroot.git
-    cd buildroot
-    git checkout 2024.02  # 稳定版本
-    cd ..
+echo ""
+echo "4. 下载 Vosk 中文模型 (2GB)..."
+MODEL_DIR="/opt/smart-locker/models"
+if [ ! -d "$MODEL_DIR/vosk-model-cn-0.22" ]; then
+    echo "  下载中..."
+    wget -q --show-progress https://alphacephei.com/vosk/models/vosk-model-cn-0.22.zip
+    unzip -q vosk-model-cn-0.22.zip -d "$MODEL_DIR/"
+    rm vosk-model-cn-0.22.zip
+    echo "  ✓ 完成"
+else
+    echo "  ✓ 已存在"
 fi
 
-echo "8. 设置Python虚拟环境..."
-python3 -m venv venv
-source venv/bin/activate
-pip install numpy opencv-python dlib vosk
-
-echo "开发环境设置完成！"
-echo "请运行: source venv/bin/activate 激活Python环境"
+echo ""
+echo "====================================="
+echo "开发环境初始化完成！"
+echo ""
+echo "运行主程序:"
+echo "  cd /opt/smart-locker && PYTHONPATH=/opt/smart-locker python3 src/ui/main_gui_qt.py"
