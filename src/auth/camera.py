@@ -97,10 +97,6 @@ class USBCamera:
     def _preconfig_mipi(self):
         """预先用 v4l2-ctl 设置 MIPI CSI 摄像头格式，避免 ISP 管线协商超时"""
         try:
-            subprocess.run(['fuser', '-k', self.device], capture_output=True, timeout=3)
-        except Exception:
-            pass
-        try:
             subprocess.run([
                 'v4l2-ctl', '-d', self.device,
                 '--set-fmt-video',

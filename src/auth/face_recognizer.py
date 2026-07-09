@@ -27,6 +27,9 @@ class FaceRecognizer:
         self.label_map = {}  # {user_id: label}
         self.reverse_label_map = {}  # {label: user_id}
 
+        # 持久化摄像头（避免反复 open/close 导致 ISP 驱动刷日志）
+        self._cap = None
+
         # 尝试加载训练好的模型
         model_file = os.path.join(model_dir, 'face_recognizer.yml')
         label_file = os.path.join(model_dir, 'label_map.npy')
@@ -63,30 +66,33 @@ class FaceRecognizer:
             return (x, y, w, h)
         return None
 
+    def _ensure_camera(self, camera_id: int = 0):
+        """保持摄像头持续打开，避免反复 open/close 触发 ISP 日志刷屏"""
+        if self._cap is None or not self._cap.isOpened():
+            self._cap = cv2.VideoCapture(camera_id)
+            if not self._cap.isOpened():
+                print(f"[FaceRecognizer] 无法打开摄像头 {camera_id}")
+                self._cap = None
+                return False
+            # 预热：丢弃前几帧等待自动曝光
+            for _ in range(10):
+                self._cap.read()
+        return True
+
+    def close_camera(self):
+        """释放摄像头"""
+        if self._cap is not None:
+            self._cap.release()
+            self._cap = None
+
     def capture_face_image(self, camera_id: int = 0) -> Optional[np.ndarray]:
-        """
-        从摄像头捕获人脸图像
-
-        Args:
-            camera_id: 摄像头 ID
-
-        Returns:
-            人脸图像（灰度），如果未检测到返回 None
-        """
-        cap = cv2.VideoCapture(camera_id)
-        if not cap.isOpened():
-            print(f"[FaceRecognizer] 无法打开摄像头 {camera_id}")
+        if not self._ensure_camera(camera_id):
             return None
 
         print("[FaceRecognizer] 正在检测人脸...")
 
-        # 读取几帧，等待自动曝光
-        for _ in range(10):
-            cap.read()
-
-        # 尝试多次检测人脸
         for attempt in range(30):
-            ret, frame = cap.read()
+            ret, frame = self._cap.read()
             if not ret:
                 continue
 
@@ -95,14 +101,10 @@ class FaceRecognizer:
                 x, y, w, h = face_box
                 face_roi = frame[y:y+h, x:x+w]
                 gray_face = cv2.cvtColor(face_roi, cv2.COLOR_BGR2GRAY)
-                # 统一尺寸
                 gray_face = cv2.resize(gray_face, (100, 100))
-
-                cap.release()
                 print(f"[FaceRecognizer] ✅ 检测到人脸 (尝试 {attempt + 1})")
                 return gray_face
 
-        cap.release()
         print("[FaceRecognizer] ❌ 未检测到人脸")
         return None
 
@@ -121,8 +123,7 @@ class FaceRecognizer:
         print(f"  将采集 {num_samples} 个人脸样本")
         print("  请保持头部正对摄像头，稍微转动头部\n")
 
-        cap = cv2.VideoCapture(0)
-        if not cap.isOpened():
+        if not self._ensure_camera(0):
             print("[FaceRecognizer] 无法打开摄像头")
             return False
 
@@ -139,16 +140,12 @@ class FaceRecognizer:
         samples_dir = os.path.join(self.model_dir, 'samples', f'user_{user_id}')
         os.makedirs(samples_dir, exist_ok=True)
 
-        # 读取几帧，等待自动曝光
-        for _ in range(10):
-            cap.read()
-
         samples = []
         count = 0
         print("  开始采集样本...")
 
         while count < num_samples:
-            ret, frame = cap.read()
+            ret, frame = self._cap.read()
             if not ret:
                 continue
 
@@ -167,8 +164,6 @@ class FaceRecognizer:
 
                 count += 1
                 print(f"    样本 {count}/{num_samples}", end='\r')
-
-        cap.release()
 
         if len(samples) < 5:
             print(f"\n  ❌ 采集样本不足 ({len(samples)}/{num_samples})")
