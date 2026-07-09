@@ -97,6 +97,10 @@ PYTHONPATH=/opt/smart-locker python3 src/ui/main_gui_qt.py
 PYTHONPATH=/opt/smart-locker python3 src/main/locker_cli.py
 ```
 
+## 演示视频
+
+[下载观看](https://github.com/Hil-Lin/eva-ai-locker/releases/download/v1.0.0/default.mp4)
+
 ## 许可证
 
 GPL-3.0 License — 详见 [LICENSE](LICENSE) 文件
